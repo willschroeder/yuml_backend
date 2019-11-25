@@ -1,0 +1,27 @@
+{
+  "name": "yuml_backend",
+  "version": "1.0.0",
+  "description": "yuml backend",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx jest",
+    "tsc": "tsc",
+    "dev": "DEBUG=yuml:* ts-node-dev --respawn --transpileOnly ./src/main.ts",
+    "build": "rm -rf ./build/* && tsc",
+    "prod": "node ./build/main.js",
+    "clean": "rm -rf ./build/*",
+    "lint": "npx eslint 'src/**/*.ts' --fix",
+    "migrate": "DEBUG=yuml:* ts-node-dev ./src/main.ts command migrate",
+    "drop": "DEBUG=yuml:* ts-node-dev ./src/main.ts command drop",
+    "testcmd": "DEBUG=yuml:* ts-node-dev ./src/main.ts command testcmd"
+  },
+  "author": "will schroeder",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/jest": "^24.0.23",
+    "jest": "^24.9.0",
+    "ts-jest": "^24.2.0",
+    "ts-node-dev": "^1.0.0-pre.44",
+    "typescript": "^3.7.2"
+  }
+}
