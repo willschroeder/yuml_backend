@@ -8,7 +8,7 @@ const tests = [
     "1 1/2 cups finely chopped red onions",
     // "1 1/2 tsp red onions finely chopped",
     // "2 1/2 tablespoons finely chopped parsley",
-    // "3 large Granny Smith apples",
+    // "3 large Granny Smith apples", // TODO large is a size modifier
     // "1 pound carrots, young ones if possible", // TODO needs to split carrots off after noun, dont let values be re-set.
     /*
         1 pound finely chopped carrots, young ones if possible
@@ -16,7 +16,7 @@ const tests = [
         IDEAL
         1 pound carrots, finely chopped, young ones if possible
 
-        is the first noun grouping assumed to be the ingredient?
+        is the first noun grouping (that isnt a unit)  assumed to be the ingredient?
         maybe everything after the first comma/sentence break is descriptions
      */
     // "Kosher salt, to taste",
@@ -61,6 +61,7 @@ function stringToEnum<T>(enumObj: T, str: string | number): T {
 
 const parse = nlp(tests[0]).out('tags')
 debug(parse)
+// debug(nlp(tests[0]).sentences().out())
 
 const zip = parse.map((i: {text: string, normal: string, tags: string[]}): IToken => {
     // Make Condition a Conjunction, example: "if"
