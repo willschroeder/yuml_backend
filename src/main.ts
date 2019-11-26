@@ -6,9 +6,9 @@ import _ = require("lodash");
 const debug = Debug("*")
 
 const tests = [
-    "1 1/2 cups finely chopped red onions",
+    // "1 1/2 cups finely chopped red onions",
     // "1 1/2 tsp red onions finely chopped",
-    // "2 1/2 tablespoons finely chopped parsley",
+    "2 1/2 tablespoons finely chopped parsley",
     // "3 large Granny Smith apples",
     // "1 pound carrots, young ones if possible",
     // "Kosher salt, to taste",
@@ -70,41 +70,44 @@ const zip = parse.map((i: {text: string, normal: string, tags: string[]}): IToke
     return {text: i.normal, tag: stringToEnum(Tags, tag)}
 }) as IToken[]
 
-// debug(zip)
+try {
+    let tempAmount = 0
+    let tempUnit = ""
+    let tempPreparation = ""
+    let tempIngredient = ""
 
-let tempAmount = 0
-let tempUnit = ""
-let tempPreparation = ""
-let tempIngredient = ""
+    while (zip.length > 0) {
+        const headTag = zip[0].tag
 
-while (zip.length > 0) {
-    const headTag = zip[0].tag
+        if(headTag === Tags.Cardinal) {
+            const {amount, unit} = parseAmount()
+            tempAmount = amount
+            tempUnit = unit
+        }
+        else if ([Tags.Adverb, Tags.Verb].includes(headTag)) {
+            tempPreparation = parsePreparation()
+        }
+        else if ([Tags.Adjective, Tags.Noun].includes(headTag)) {
+            tempIngredient = parseIngredient()
+        }
+        else {
+            throw `Unknown tag type in ${headTag}`
+        }
+    }
 
-    if(headTag === Tags.Cardinal) {
-        const {amount, unit} = parseAmount()
-        tempAmount = amount
-        tempUnit = unit
-    }
-    else if ([Tags.Adverb, Tags.Verb].includes(headTag)) {
-        tempPreparation = parsePreparation()
-    }
-    else if ([Tags.Adjective, Tags.Noun].includes(headTag)) {
-        tempIngredient = parseIngredient()
-    }
-    else {
-        throw `Unknown tag type in ${headTag}`
-    }
+    debug(tempAmount)
+    debug(tempUnit)
+    debug(tempPreparation)
+    debug(tempIngredient)
 }
-
-debug(tempAmount)
-debug(tempUnit)
-debug(tempPreparation)
-debug(tempIngredient)
+catch (e) {
+    debug(e)
+}
 
 function parsePreparation(): string {
     let prep = []
 
-    while (true) {
+    while (zip[0]) {
         if ([Tags.Adverb, Tags.Verb].includes(zip[0].tag)) {
             prep.push(zip[0].text)
             zip.shift()
