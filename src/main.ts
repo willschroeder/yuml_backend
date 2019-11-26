@@ -5,18 +5,27 @@ import _ = require("lodash");
 const debug = Debug("*")
 
 const tests = [
-    // "1 1/2 cups finely chopped red onions",
+    "1 1/2 cups finely chopped red onions",
     // "1 1/2 tsp red onions finely chopped",
     // "2 1/2 tablespoons finely chopped parsley",
     // "3 large Granny Smith apples",
-    // "1 pound carrots, young ones if possible", // TODO needs to split carrots off after noun, dont let values be re-set
+    // "1 pound carrots, young ones if possible", // TODO needs to split carrots off after noun, dont let values be re-set.
+    /*
+        1 pound finely chopped carrots, young ones if possible
+
+        IDEAL
+        1 pound carrots, finely chopped, young ones if possible
+
+        is the first noun grouping assumed to be the ingredient?
+        maybe everything after the first comma/sentence break is descriptions
+     */
     // "Kosher salt, to taste",
     // "2 tablespoons sherry vinegar",
     // "2 tablespoons honey",
     // "2 tablespoons extra-virgin olive oil",
     // "1 medium-size shallot, peeled and finely diced", // TODO sentence split
     // "1/2 teaspoon fresh thyme leaves, finely chopped",
-    // "2-3 tablespoons butter" // TODO unsure what to do with dash
+    // "2-3 tablespoons butter" // TODO unsure what to do with dash, zestful flatten to smallest number
 ]
 
 type Ingreident = {
