@@ -8,14 +8,15 @@ const tests = [
     // "1 1/2 cups finely chopped red onions",
     // "1 1/2 tsp red onions finely chopped",
     // "2 1/2 tablespoons finely chopped parsley",
-    // "3 large Granny Smith apples", // TODO 3 must standalone, a quantity might not end with a noun
+    // "3 large Granny Smith apples",
     // "1 pound carrots, young ones if possible", // TODO needs to split carrots off after noun, dont let values be re-set
-    "Kosher salt, to taste", // TODO after the nouns stop, end recipe
+    // "Kosher salt, to taste",
     // "2 tablespoons sherry vinegar",
     // "2 tablespoons honey",
     // "2 tablespoons extra-virgin olive oil",
     // "1 medium-size shallot, peeled and finely diced", // TODO sentence split
     // "1/2 teaspoon fresh thyme leaves, finely chopped",
+    // "2-3 tablespoons butter" // TODO unsure what to do with dash
 ]
 
 type Ingreident = {
@@ -71,10 +72,10 @@ const zip = parse.map((i: {text: string, normal: string, tags: string[]}): IToke
 debug(zip)
 
 try {
-    let tempAmount = 0
-    let tempUnit = ""
-    let tempPreparation = ""
-    let tempIngredient = ""
+    let tempAmount: number|undefined
+    let tempUnit: string|undefined
+    let tempPreparation: string|undefined
+    let tempIngredient: string|undefined
 
     while (zip.length > 0) {
         const headTag = zip[0].tag
@@ -84,11 +85,11 @@ try {
             tempAmount = amount
             tempUnit = unit
         }
-        else if ([Tags.Adverb, Tags.Verb].includes(headTag)) {
-            tempPreparation = parsePreparation()
-        }
-        else if ([Tags.Adjective, Tags.Noun].includes(headTag)) {
+        else if (!tempIngredient && [Tags.Adjective, Tags.Noun].includes(headTag)) {
             tempIngredient = parseIngredient()
+        }
+        else if ([Tags.Adverb, Tags.Verb, Tags.Conjunction].includes(headTag)) {
+            tempPreparation = parsePreparation()
         }
         else {
             throw `Unable to start with a tag ${headTag}`
@@ -97,8 +98,8 @@ try {
 
     debug(tempAmount)
     debug(tempUnit)
-    debug(tempPreparation)
     debug(tempIngredient)
+    debug(tempPreparation)
 }
 catch (e) {
     debug(e)
@@ -108,7 +109,7 @@ function parsePreparation(): string {
     let prep = []
 
     while (zip[0]) {
-        if ([Tags.Adverb, Tags.Verb].includes(zip[0].tag)) {
+        if ([Tags.Adverb, Tags.Verb, Tags.Conjunction].includes(zip[0].tag)) {
             prep.push(zip[0].text)
             zip.shift()
         }
@@ -120,7 +121,7 @@ function parsePreparation(): string {
     return prep.join(' ')
 }
 
-function parseAmount(): {amount: number, unit: string} {
+function parseAmount(): {amount: number, unit?: string} {
     let amount = 0
     let unit = undefined
 
@@ -139,13 +140,13 @@ function parseAmount(): {amount: number, unit: string} {
             zip.shift()
             break
         }
+        else {
+            break
+        }
     }
 
     if (amount <= 0) {
         throw "Amount cant be 0"
-    }
-    if (!unit) {
-        throw "No unit found"
     }
 
     return {amount: amount, unit: unit}
@@ -153,11 +154,21 @@ function parseAmount(): {amount: number, unit: string} {
 
 function parseIngredient(): string {
     let ingredient = []
+    let nounSet = false // nouns should be the last thing in an ingredient
 
     while (zip[0]) {
-        if ([Tags.Adjective, Tags.Noun, Tags.Conjunction].includes(zip[0].tag)) {
+        if ([Tags.Adjective].includes(zip[0].tag)) {
+            if (nounSet) {
+                break
+            }
+
             ingredient.push(zip[0].text)
             zip.shift()
+        }
+        if ([Tags.Adjective, Tags.Noun].includes(zip[0].tag)) {
+            ingredient.push(zip[0].text)
+            zip.shift()
+            nounSet = true
         }
         else {
             break
