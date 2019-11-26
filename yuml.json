@@ -1,0 +1,87 @@
+{
+    "schemaVersion": 1,
+    "id": "ae96ca04-431a-4887-8bda-9d239b3f1015",
+    "info": {
+        "title": "KFC Meal",
+        "author": "Babbish",
+        "description": "providing a double-whammy reason to fry up a batch of fried chicken",
+        "video": "http://youtube.com/ds97fs0ds",
+        "url": "https://www.bingingwithbabish.com/recipes/kfcmeal",
+        "photo": "photo-uuid-from-below",
+        "timeToMake": 3600,
+        "servings": 5,
+        "createdAt": 1574145694,
+        "updatedAt": 1574145694
+    },
+    "recipes": [
+        {
+            "title": "Buttermilk Fried Chicken",
+            "ingredients": [
+                {
+                    "text": "12 herbs and spices",
+                    "children": [
+                        {
+                            "text": "salt",
+                            "amount": {
+                                "exact": {
+                                    "whole": 0,
+                                    "numerator": 2,
+                                    "demoniator": 3,
+                                    "unit": "tsp"
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "text": "corn starch",
+                    "amount": {
+                        "fuzzy": {
+                            "text": "3-4 cups to taste"
+                        }
+                    }
+                }
+            ],
+            "steps": [
+                {
+                    "text": "Put flour in bowl",
+                    "photo": "photo-uuid-from-below"
+                }
+            ]
+        }
+    ],
+    "footnotes": [
+        {
+            "text": "Reynolds® Aluminum foil can be used to keep food moist, cook it evenly, and make clean-up easier."
+        }
+    ],
+    "nutrition": {
+        "servings": 12,
+        "calories": 5000,
+        "nutrients": [
+            {
+                "text": "Total Fat",
+                "amount": "12g",
+                "dailyValue": 10,
+                "children": [
+                    {
+                        "text": "Saturated Fat",
+                        "amount": "12g",
+                        "dailyValue": 10
+                    }
+                ]
+            }
+        ]
+    },
+    "photos": [
+        {
+            "id": "ae96ca04-431a-4887-8bda-9d239b3f1015",
+            "mime": "image/png",
+            "origin": "http://www.sdfs.com/someimg.png",
+            "width": 64,
+            "height": 64,
+            "fileSize": 64,
+            "data": "base64...."
+        }
+    ]
+}
