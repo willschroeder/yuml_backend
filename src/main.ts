@@ -1,5 +1,4 @@
 import nlp = require('compromise')
-import util = require('util')
 import Debug from "debug"
 import _ = require("lodash");
 
@@ -8,16 +7,15 @@ const debug = Debug("*")
 const tests = [
     // "1 1/2 cups finely chopped red onions",
     // "1 1/2 tsp red onions finely chopped",
-    "2 1/2 tablespoons finely chopped parsley",
-    // "3 large Granny Smith apples",
-    // "1 pound carrots, young ones if possible",
-    // "Kosher salt, to taste",
+    // "2 1/2 tablespoons finely chopped parsley",
+    // "3 large Granny Smith apples", // TODO 3 must standalone, a quantity might not end with a noun
+    // "1 pound carrots, young ones if possible", // TODO needs to split carrots off after noun, dont let values be re-set
+    "Kosher salt, to taste", // TODO after the nouns stop, end recipe
     // "2 tablespoons sherry vinegar",
     // "2 tablespoons honey",
     // "2 tablespoons extra-virgin olive oil",
-    // "1 medium-size shallot, peeled and finely diced",
+    // "1 medium-size shallot, peeled and finely diced", // TODO sentence split
     // "1/2 teaspoon fresh thyme leaves, finely chopped",
-    // "Black pepper, to taste",
 ]
 
 type Ingreident = {
@@ -30,22 +28,13 @@ type Ingreident = {
 // order matters
 // constrain to https://www.clips.uantwerpen.be/pages/mbsp-tags
 enum Tags {
-    "Cardinal" = "Cardinal",
-    "Noun" = "Noun",
-    "Adverb" = "Adverb",
-    "Verb" = "Verb",
-    "Adjective" = "Adjective"
+    Cardinal = "Cardinal",
+    Noun = "Noun",
+    Adverb = "Adverb",
+    Verb = "Verb",
+    Adjective = "Adjective",
+    Conjunction = "Conjunction"
 }
-
-/*
-  * [ { text: '1', tag: 'Cardinal' },
-  *   { text: '1/2', tag: 'Cardinal' },
-  *   { text: 'cups', tag: 'Noun' },
-  *   { text: 'finely', tag: 'Adverb' },
-  *   { text: 'chopped', tag: 'Verb' },
-  *   { text: 'red', tag: 'Adjective' },
-  *   { text: 'onions', tag: 'Noun' } ] +0ms
- */
 
 interface IToken {
     text: string,
@@ -61,14 +50,25 @@ function stringToEnum<T>(enumObj: T, str: string | number): T {
 }
 
 const parse = nlp(tests[0]).out('tags')
+debug(parse)
+
 const zip = parse.map((i: {text: string, normal: string, tags: string[]}): IToken => {
+    // Make Condition a Conjunction, example: "if"
+    if (i.tags.includes("Condition")) {
+        return {text: i.normal, tag: Tags.Conjunction}
+    }
+
     const tag = _.intersection(i.tags, Object.keys(Tags))[0]
     if (!tag) {
+
+        debug(`Unknown mapped token type in ${i.tags}`)
         throw `Unknown mapped token type in ${i.tags}`
     }
     // @ts-ignore
     return {text: i.normal, tag: stringToEnum(Tags, tag)}
 }) as IToken[]
+
+debug(zip)
 
 try {
     let tempAmount = 0
@@ -91,7 +91,7 @@ try {
             tempIngredient = parseIngredient()
         }
         else {
-            throw `Unknown tag type in ${headTag}`
+            throw `Unable to start with a tag ${headTag}`
         }
     }
 
@@ -155,7 +155,7 @@ function parseIngredient(): string {
     let ingredient = []
 
     while (zip[0]) {
-        if ([Tags.Adjective, Tags.Noun].includes(zip[0].tag)) {
+        if ([Tags.Adjective, Tags.Noun, Tags.Conjunction].includes(zip[0].tag)) {
             ingredient.push(zip[0].text)
             zip.shift()
         }
