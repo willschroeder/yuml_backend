@@ -13,7 +13,8 @@ enum Tags {
     Adverb = "Adverb",
     Verb = "Verb",
     Adjective = "Adjective",
-    Conjunction = "Conjunction"
+    Conjunction = "Conjunction",
+    Comma = "Comma"
 }
 
 
@@ -38,21 +39,29 @@ export class Tokenizer {
 
     public tokenize(): Token[] {
         const parse = nlp(this.str).out('tags')
-        return parse.map((i: {text: string, normal: string, tags: string[]}): Token => {
+        const tokens: Token[] = []
+        parse.forEach((i: {text: string, normal: string, tags: string[]}) => {
             // Make Condition a Conjunction, example: "if"
             if (i.tags.includes("Condition")) {
-                return {text: i.normal, tag: Tags.Conjunction}
+                tokens.push({text: i.normal, tag: Tags.Conjunction})
+            }
+            else {
+                const tag = _.intersection(i.tags, Object.keys(Tags))[0]
+                if (!tag) {
+
+                    debug(`Unknown mapped token type in ${i.tags}`)
+                    throw `Unknown mapped token type in ${i.tags}`
+                }
+                // @ts-ignore
+                tokens.push({text: i.normal, tag: stringToEnum(Tags, tag)})
             }
 
-            const tag = _.intersection(i.tags, Object.keys(Tags))[0]
-            if (!tag) {
-
-                debug(`Unknown mapped token type in ${i.tags}`)
-                throw `Unknown mapped token type in ${i.tags}`
+            if (i.tags.includes("Comma")) {
+                tokens.push({text: ',', tag: Tags.Comma})
             }
-            // @ts-ignore
-            return {text: i.normal, tag: stringToEnum(Tags, tag)}
         })
+
+        return tokens
     }
 }
 
@@ -71,8 +80,13 @@ export class Parser {
         const ingredient: Ingredient = {
         }
 
+        console.log(this.tokens)
+
         while (this.tokens.length > 0) {
             const headTag = this.tokens[0].tag
+            if (!headTag) {
+                break
+            }
 
             if(headTag === Tags.Cardinal) {
                 const {quantity, unit} = this.parseQuantity()
@@ -84,6 +98,9 @@ export class Parser {
             }
             else if ([Tags.Adverb, Tags.Verb, Tags.Conjunction].includes(headTag)) {
                 ingredient.preparationNotes = this.parsePreparation()
+            }
+            else if (headTag === Tags.Comma) {
+                this.tokens.shift()
             }
             else {
                 throw `Unable to start with a tag ${headTag}`

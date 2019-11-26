@@ -29,7 +29,7 @@ const tests: {text: string, answer: Ingredient}[] = [
         }
     },
     {
-        text: "3 large Granny Smith apples", // TODO large is a size modifier
+        text: "3 large Granny Smith apples",
         answer: {
             product: "large granny smith apples",
             quantity: 3,
@@ -87,15 +87,14 @@ const tests: {text: string, answer: Ingredient}[] = [
     //         preparationNotes: "finely chopped"
     //     }
     // },
-    // {
-    //     text: "1 medium-size shallot, peeled and finely diced", // TODO sentence split
-    //     answer: {
-    //         product: "red onions",
-    //         quantity: 1.5,
-    //         unit: "cups",
-    //         preparationNotes: "finely chopped"
-    //     }
-    // },
+    {
+        text: "1 medium-size shallot, peeled and finely diced", // TODO sentence split
+        answer: {
+            product: "medium size shallot",
+            quantity: 1,
+            preparationNotes: "peeled and finely diced"
+        }
+    },
     // {
     //     text: "1/2 teaspoon fresh thyme leaves, finely chopped", // TODO leaves not appending
     //     answer: {
@@ -123,3 +122,11 @@ for (const test of tests) {
         expect(ingredient).toMatchObject(test.answer)
     })
 }
+
+it("one off", () => {
+    const test = tests[7]
+    const tokens = new Tokenizer(test.text).tokenize()
+    console.log(tokens)
+    const ingredient = new Parser(tokens).parse()
+    expect(ingredient).toMatchObject(test.answer)
+})
