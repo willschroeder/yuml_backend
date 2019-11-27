@@ -67,15 +67,14 @@ const tests: {text: string, answer: Ingredient}[] = [
             unit: "tablespoons",
         }
     },
-    // {
-    //     text: "2 tablespoons extra-virgin olive oil", // TODO Unable to start with a tag Adjective
-    //     answer: {
-    //         product: "red onions",
-    //         quantity: 1.5,
-    //         unit: "cups",
-    //         preparationNotes: "finely chopped"
-    //     }
-    // },
+    {
+        text: "2 tablespoons extra-virgin olive oil",
+        answer: {
+            product: "extra virgin olive oil",
+            quantity: 2,
+            unit: "tablespoons",
+        }
+    },
     {
         text: "1 medium-size shallot, peeled and finely diced",
         answer: {
@@ -104,8 +103,10 @@ const tests: {text: string, answer: Ingredient}[] = [
     // },
 ]
 
+let i = -1
 for (const test of tests) {
-    it(`${test.text}`, () => {
+    i += 1
+    it(`test index ${i} - ${test.text}`, () => {
         const tokens = new Tokenizer(test.text).tokenize()
         const ingredient = new Parser(tokens).parse()
         expect(ingredient).toMatchObject(test.answer)
@@ -113,7 +114,7 @@ for (const test of tests) {
 }
 
 it("one off", () => {
-    const test = tests[0] // 7
+    const test = tests[8]
     const tokens = new Tokenizer(test.text).tokenize()
     const ingredient = new Parser(tokens).parse()
     expect(ingredient).toMatchObject(test.answer)

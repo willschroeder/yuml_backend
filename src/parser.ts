@@ -81,7 +81,7 @@ export class Parser {
         const ingredient: Ingredient = {
         }
 
-        // console.log(this.tokens)
+        console.log(this.tokens)
 
         while (this.tokens.length > 0) {
             const headTag = this.tokens[0].tag
@@ -176,21 +176,11 @@ export class Parser {
 
     private parseProduct(): string {
         let ingredient = []
-        let nounSet = false // nouns should be the last thing in an ingredient
 
         while (this.tokens[0]) {
-            if ([Tags.Adjective].includes(this.tokens[0].tag)) {
-                if (nounSet) {
-                    break
-                }
-
-                ingredient.push(this.tokens[0].text)
-                this.tokens.shift()
-            }
             if ([Tags.Adjective, Tags.Noun].includes(this.tokens[0].tag)) {
                 ingredient.push(this.tokens[0].text)
                 this.tokens.shift()
-                nounSet = true
             }
             else {
                 break
