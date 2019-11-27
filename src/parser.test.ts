@@ -84,7 +84,7 @@ const tests: {text: string, answer: Ingredient}[] = [
         }
     },
     // {
-    //     text: "1/2 teaspoon fresh thyme leaves, finely chopped", // TODO leaves not appending
+    //     text: "1/2 teaspoon fresh thyme leaves, finely chopped", // TODO leaves not appending because lib says its a verb
     //     answer: {
     //         product: "fresh thyme leaves",
     //         quantity: 0.5,
@@ -113,9 +113,9 @@ for (const test of tests) {
     })
 }
 
-it("one off", () => {
-    const test = tests[8]
-    const tokens = new Tokenizer(test.text).tokenize()
-    const ingredient = new Parser(tokens).parse()
-    expect(ingredient).toMatchObject(test.answer)
-})
+// it("one off", () => {
+//     const test = tests[10]
+//     const tokens = new Tokenizer(test.text).tokenize()
+//     const ingredient = new Parser(tokens).parse()
+//     expect(ingredient).toMatchObject(test.answer)
+// })

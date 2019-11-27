@@ -81,7 +81,7 @@ export class Parser {
         const ingredient: Ingredient = {
         }
 
-        console.log(this.tokens)
+        // console.log(this.tokens)
 
         while (this.tokens.length > 0) {
             const headTag = this.tokens[0].tag
