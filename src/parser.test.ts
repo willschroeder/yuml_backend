@@ -35,26 +35,15 @@ const tests: {text: string, answer: Ingredient}[] = [
             quantity: 3,
         }
     },
-    // {
-    //     text: "1 pound carrots, young ones if possible",
-    //     /*
-    //         TODO needs to split carrots off after noun, dont let values be re-set.
-    //
-    //         1 pound finely chopped carrots, young ones if possible
-    //
-    //         IDEAL
-    //         1 pound carrots, finely chopped, young ones if possible
-    //
-    //         is the first noun grouping (that isnt a unit)  assumed to be the ingredient?
-    //         maybe everything after the first comma/sentence break is descriptions
-    //      */
-    //     answer: {
-    //         product: "red onions",
-    //         quantity: 1.5,
-    //         unit: "cups",
-    //         preparationNotes: "finely chopped"
-    //     }
-    // },
+    {
+        text: "1 pound carrots, young ones if possible",
+        answer: {
+            product: "carrots",
+            quantity: 1,
+            unit: "pound",
+            preparationNotes: "young ones if possible"
+        }
+    },
     {
         text: "Kosher salt, to taste",
         answer: {
@@ -88,7 +77,7 @@ const tests: {text: string, answer: Ingredient}[] = [
     //     }
     // },
     {
-        text: "1 medium-size shallot, peeled and finely diced", // TODO sentence split
+        text: "1 medium-size shallot, peeled and finely diced",
         answer: {
             product: "medium size shallot",
             quantity: 1,
@@ -124,9 +113,8 @@ for (const test of tests) {
 }
 
 it("one off", () => {
-    const test = tests[7]
+    const test = tests[0] // 7
     const tokens = new Tokenizer(test.text).tokenize()
-    console.log(tokens)
     const ingredient = new Parser(tokens).parse()
     expect(ingredient).toMatchObject(test.answer)
 })

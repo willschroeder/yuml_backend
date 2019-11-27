@@ -17,6 +17,7 @@ enum Tags {
     Comma = "Comma"
 }
 
+const WordTags = [Tags.Cardinal, Tags.Noun, Tags.Adverb, Tags.Verb, Tags.Adjective, Tags.Conjunction]
 
 function stringToEnum<T>(enumObj: T, str: string | number): T {
     const key: T | undefined = (enumObj as any)[str]
@@ -46,7 +47,7 @@ export class Tokenizer {
                 tokens.push({text: i.normal, tag: Tags.Conjunction})
             }
             else {
-                const tag = _.intersection(i.tags, Object.keys(Tags))[0]
+                const tag = _.intersection(i.tags, WordTags)[0]
                 if (!tag) {
 
                     debug(`Unknown mapped token type in ${i.tags}`)
@@ -80,7 +81,7 @@ export class Parser {
         const ingredient: Ingredient = {
         }
 
-        console.log(this.tokens)
+        // console.log(this.tokens)
 
         while (this.tokens.length > 0) {
             const headTag = this.tokens[0].tag
@@ -88,42 +89,54 @@ export class Parser {
                 break
             }
 
+            const productIdentified = ingredient.product !== undefined
+
             if(headTag === Tags.Cardinal) {
                 const {quantity, unit} = this.parseQuantity()
                 ingredient.quantity = quantity
                 ingredient.unit = unit
             }
-            else if (!ingredient.product && [Tags.Adjective, Tags.Noun].includes(headTag)) {
+            else if (!productIdentified && [Tags.Adjective, Tags.Noun].includes(headTag)) {
                 ingredient.product = this.parseProduct()
-            }
-            else if ([Tags.Adverb, Tags.Verb, Tags.Conjunction].includes(headTag)) {
-                ingredient.preparationNotes = this.parsePreparation()
             }
             else if (headTag === Tags.Comma) {
                 this.tokens.shift()
             }
             else {
-                throw `Unable to start with a tag ${headTag}`
+                const prep = this.parsePreparation(productIdentified)
+                if (!ingredient.preparationNotes) {
+                    ingredient.preparationNotes = prep
+                }
+                else {
+                    ingredient.preparationNotes += `, ${prep}`
+                }
             }
         }
 
         if (!ingredient.product) {
+            debug(ingredient)
             throw `No ingredient product parsed`
         }
 
         return ingredient
     }
 
-    private parsePreparation(): string {
+    private parsePreparation(consumeNouns: boolean): string {
         let prep = []
 
         while (this.tokens[0]) {
-            if ([Tags.Adverb, Tags.Verb, Tags.Conjunction].includes(this.tokens[0].tag)) {
-                prep.push(this.tokens[0].text)
-                this.tokens.shift()
+            if ([Tags.Adjective, Tags.Noun].includes(this.tokens[0].tag)) {
+                if (consumeNouns) {
+                    prep.push(this.tokens[0].text)
+                    this.tokens.shift()
+                }
+                else {
+                    break
+                }
             }
             else {
-                break
+                prep.push(this.tokens[0].text)
+                this.tokens.shift()
             }
         }
 
