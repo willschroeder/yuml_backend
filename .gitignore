@@ -1,6 +1,8 @@
 .DS_Store
 /build
 
+.idea
+
 # Tyepscript
 node_modules/
 .node_modules/
