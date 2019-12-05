@@ -1,8 +1,12 @@
+import nlp = require('compromise')
 import Debug from "debug"
-import {PythonRepo} from "../repo/python"
+import _ = require("lodash");
 
 const debug = Debug("*")
 
+
+// order matters
+// constrain to https://www.clips.uantwerpen.be/pages/mbsp-tags
 enum Tags {
     Cardinal = "Cardinal",
     Noun = "Noun",
@@ -10,8 +14,17 @@ enum Tags {
     Verb = "Verb",
     Adjective = "Adjective",
     Conjunction = "Conjunction",
-    Infinitival = "Infinitival",
     Comma = "Comma"
+}
+
+const WordTags = [Tags.Cardinal, Tags.Noun, Tags.Adverb, Tags.Verb, Tags.Adjective, Tags.Conjunction]
+
+function stringToEnum<T>(enumObj: T, str: string | number): T {
+    const key: T | undefined = (enumObj as any)[str]
+    if (key !== undefined) {
+        return key
+    }
+    throw `unable to convert ${str} to enum`
 }
 
 type Token = {
@@ -19,55 +32,37 @@ type Token = {
     tag: Tags
 }
 
-export class Tokenizer {
-    private readonly str: string
-    private readonly wordsWithCommas: boolean[]
 
-    constructor(str: string) {
-        this.str = str.toLowerCase()
-        this.str = this.str.replace("-", " ")
-        this.wordsWithCommas = str.split(" ").map((i) => { return i.slice(-1) === ',' })
+export class Tokenizer {
+    constructor(private str: string) {
+
     }
 
-    public async tokenize(): Promise<Token[]> {
-        const tags = (await (new PythonRepo()).tokenize([this.str]))[0]
+    public tokenize(): Token[] {
+        const parse = nlp(this.str).out('tags')
         const tokens: Token[] = []
+        parse.forEach((i: {text: string, normal: string, tags: string[]}) => {
+            // Make Condition a Conjunction, example: "if"
+            if (i.tags.includes("Condition")) {
+                tokens.push({text: i.normal, tag: Tags.Conjunction})
+            }
+            else {
+                const tag = _.intersection(i.tags, WordTags)[0]
+                if (!tag) {
 
-        tags.forEach((i: {text: string, tag: string}) => {
-            tokens.push({text: i.text, tag: this.codeToTag(i.tag)})
-        })
+                    debug(`Unknown mapped token type in ${i.tags}`)
+                    throw `Unknown mapped token type in ${i.tags}`
+                }
+                // @ts-ignore
+                tokens.push({text: i.normal, tag: stringToEnum(Tags, tag)})
+            }
 
-        this.wordsWithCommas.forEach((value: boolean, i: number) => {
-            if (value) {
-                tokens.splice(i+1, 0, {text: ',', tag: Tags.Comma})
+            if (i.tags.includes("Comma")) {
+                tokens.push({text: ',', tag: Tags.Comma})
             }
         })
 
         return tokens
-    }
-
-    private codeToTag(code: string): Tags {
-        // https://www.clips.uantwerpen.be/pages/mbsp-tags
-        switch(code.substring(0,2)) {
-            case "CD":
-                return Tags.Cardinal
-            case "NN":
-                return Tags.Noun
-            case "RB":
-                return Tags.Adverb
-            case "VB":
-                return Tags.Verb
-            case "JJ":
-                return Tags.Adjective
-            case "CC":
-            case "IN":
-                return Tags.Conjunction
-            case "TO":
-                return Tags.Infinitival
-            default:
-                debug(`Unknown tag type ${code}`)
-                throw `Unknown tag type ${code}`
-        }
     }
 }
 

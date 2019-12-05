@@ -106,16 +106,16 @@ const tests: {text: string, answer: Ingredient}[] = [
 let i = -1
 for (const test of tests) {
     i += 1
-    it(`test index ${i} - ${test.text}`, async () => {
-        const tokens = await (new Tokenizer(test.text)).tokenize()
+    it(`test index ${i} - ${test.text}`, () => {
+        const tokens = new Tokenizer(test.text).tokenize()
         const ingredient = new Parser(tokens).parse()
         expect(ingredient).toMatchObject(test.answer)
     })
 }
 
-it("one off", async () => {
-    const test = tests[4]
-    const tokens = await (new Tokenizer(test.text)).tokenize()
-    const ingredient = new Parser(tokens).parse()
-    expect(ingredient).toMatchObject(test.answer)
-})
+// it("one off", () => {
+//     const test = tests[10]
+//     const tokens = new Tokenizer(test.text).tokenize()
+//     const ingredient = new Parser(tokens).parse()
+//     expect(ingredient).toMatchObject(test.answer)
+// })
