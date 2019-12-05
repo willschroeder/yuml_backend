@@ -84,19 +84,22 @@ const tests: {text: string, answer: Ingredient}[] = [
         }
     },
     // {
+    //     text: "carrots", // TODO carrots is assumed to be the unit (like cups)
+    //     answer: {
+    //         product: "carrots",
+    //     }
+    // },
+    // {
+    //     text: "",
+    //     answer: {
+    //
+    //     }
+    // },
+    // {
     //     text: "2 carrots", // TODO carrots is assumed to be the unit (like cups)
     //     answer: {
     //         product: "carrots",
     //         quantity: 2,
-    //     }
-    // },
-    // {
-    //     text: "1/2 teaspoon fresh thyme leaves, finely chopped", // TODO leaves not appending because lib says its a verb
-    //     answer: {
-    //         product: "fresh thyme leaves",
-    //         quantity: 0.5,
-    //         unit: "teaspoon",
-    //         preparationNotes: "finely chopped"
     //     }
     // },
     // {
