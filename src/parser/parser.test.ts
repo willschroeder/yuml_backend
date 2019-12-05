@@ -84,9 +84,9 @@ const tests: {text: string, answer: Ingredient}[] = [
         }
     },
     // {
-    //     text: "2 carrots", // TODO No ingredient product parsed
+    //     text: "2 carrots", // TODO carrots is assumed to be the unit (like cups)
     //     answer: {
-    //         product: "shallots",
+    //         product: "carrots",
     //         quantity: 2,
     //     }
     // },
@@ -128,9 +128,9 @@ for (const test of tests) {
     })
 }
 
-// it("one off", () => {
-//     const test = tests[10]
-//     const tokens = new Tokenizer(test.text).tokenize()
-//     const ingredient = new Parser(tokens).parse()
-//     expect(ingredient).toMatchObject(test.answer)
-// })
+it("one off", () => {
+    const test = tests[10]
+    const tokens = new Tokenizer(test.text).tokenize()
+    const ingredient = new Parser(tokens).parse()
+    expect(ingredient).toMatchObject(test.answer)
+})
