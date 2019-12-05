@@ -27,6 +27,7 @@
     "typescript": "^3.7.2"
   },
   "dependencies": {
+    "compromise": "^11.14.3",
     "debug": "^4.1.1",
     "execa": "^3.4.0",
     "lodash": "^4.17.15",

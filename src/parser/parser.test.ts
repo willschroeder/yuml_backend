@@ -84,6 +84,13 @@ const tests: {text: string, answer: Ingredient}[] = [
         }
     },
     // {
+    //     text: "2 carrots", // TODO No ingredient product parsed
+    //     answer: {
+    //         product: "shallots",
+    //         quantity: 2,
+    //     }
+    // },
+    // {
     //     text: "1/2 teaspoon fresh thyme leaves, finely chopped", // TODO leaves not appending because lib says its a verb
     //     answer: {
     //         product: "fresh thyme leaves",
@@ -99,6 +106,14 @@ const tests: {text: string, answer: Ingredient}[] = [
     //         quantity: 1.5,
     //         unit: "cups",
     //         preparationNotes: "finely chopped"
+    //     }
+    // },
+    // {
+    //     text: "⅓ cup shallot", // TODO unicode
+    //     answer: {
+    //         product: "medium size shallot",
+    //         quantity: 1,
+    //         preparationNotes: "peeled and finely diced"
     //     }
     // },
 ]

@@ -1,9 +1,8 @@
-import nlp = require('compromise')
 import Debug from "debug"
 import _ = require("lodash");
+import nlp = require('compromise')
 
 const debug = Debug("*")
-
 
 // order matters
 // constrain to https://www.clips.uantwerpen.be/pages/mbsp-tags
