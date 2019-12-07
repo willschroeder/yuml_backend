@@ -83,12 +83,12 @@ const tests: {text: string, answer: Ingredient}[] = [
             preparationNotes: "peeled and finely diced"
         }
     },
-    // {
-    //     text: "carrots", // TODO carrots is assumed to be the unit (like cups)
-    //     answer: {
-    //         product: "carrots",
-    //     }
-    // },
+    {
+        text: "carrots",
+        answer: {
+            product: "carrots",
+        }
+    },
     // {
     //     text: "",
     //     answer: {
