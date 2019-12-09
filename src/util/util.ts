@@ -1,9 +1,6 @@
 import Debug from "debug"
 import HttpErrors = require("http-errors")
-import Koa = require("koa")
-import _ = require("lodash")
 import util = require("util")
-import uuidv4 = require("uuid/v4")
 
 const debug = Debug("benjamins:util")
 
@@ -51,6 +48,7 @@ export function isDevelopmentOrTestEnvironment(): boolean {
 export async function sleep(ms: number) {
     await util.promisify(setTimeout)(ms)
 }
+
 export function unixTimestamp(date?: Date): number {
     date = date || (new Date())
     return Math.floor(date.getTime() / 1000.0)

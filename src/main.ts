@@ -1,9 +1,9 @@
 import Koa = require("koa")
+import koaBody = require("koa-body")
+import Route = require("koa-route")
 import Debug from "debug"
 import {exceptionHandler} from "./util/util"
 import {Singleton} from "./singleton/singleton"
-import koaBody = require("koa-body")
-import Route = require("koa-route")
 import {IndexController} from "./http/index_controller"
 
 const debug = Debug("yuml:main")

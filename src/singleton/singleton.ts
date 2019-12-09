@@ -1,16 +1,17 @@
 import {resolveEnvironment} from "../util/util"
+import Debug from "debug"
 import PG = require("pg")
 import Postgrator = require("postgrator")
-import Debug from "debug"
 
 const debug = Debug("yuml:singleton")
 
 export class Singleton {
+    private static pgInst: PG.Pool
+    private static postgratorInst: Postgrator
+
     private constructor() {
 
     }
-    private static pgInst: PG.Pool
-    private static postgratorInst: Postgrator
 
     public static pg() {
         if (!Singleton.pgInst) {

@@ -1,5 +1,5 @@
 import Debug from "debug"
-import _ = require("lodash");
+import _ = require("lodash")
 import nlp = require('compromise')
 
 const debug = Debug("*")
@@ -40,12 +40,11 @@ export class Tokenizer {
     public tokenize(): Token[] {
         const parse = nlp(this.str).out('tags')
         const tokens: Token[] = []
-        parse.forEach((i: {text: string, normal: string, tags: string[]}) => {
+        parse.forEach((i: { text: string, normal: string, tags: string[] }) => {
             // Make Condition a Conjunction, example: "if"
             if (i.tags.includes("Condition")) {
                 tokens.push({text: i.normal, tag: Tags.Conjunction})
-            }
-            else {
+            } else {
                 const tag = _.intersection(i.tags, WordTags)[0]
                 if (!tag) {
 
@@ -77,8 +76,7 @@ export class Parser {
     }
 
     public parse(): Ingredient {
-        const ingredient: Ingredient = {
-        }
+        const ingredient: Ingredient = {}
 
         // console.log(this.tokens)
 
@@ -90,23 +88,19 @@ export class Parser {
 
             const productIdentified = ingredient.product !== undefined
 
-            if(headTag === Tags.Cardinal) {
+            if (headTag === Tags.Cardinal) {
                 const {quantity, unit} = this.parseQuantity()
                 ingredient.quantity = quantity
                 ingredient.unit = unit
-            }
-            else if (!productIdentified && [Tags.Adjective, Tags.Noun].includes(headTag)) {
+            } else if (!productIdentified && [Tags.Adjective, Tags.Noun].includes(headTag)) {
                 ingredient.product = this.parseProduct()
-            }
-            else if (headTag === Tags.Comma) {
+            } else if (headTag === Tags.Comma) {
                 this.tokens.shift()
-            }
-            else {
+            } else {
                 const prep = this.parsePreparation(productIdentified)
                 if (!ingredient.preparationNotes) {
                     ingredient.preparationNotes = prep
-                }
-                else {
+                } else {
                     ingredient.preparationNotes += `, ${prep}`
                 }
             }
@@ -128,12 +122,10 @@ export class Parser {
                 if (consumeNouns) {
                     prep.push(this.tokens[0].text)
                     this.tokens.shift()
-                }
-                else {
+                } else {
                     break
                 }
-            }
-            else {
+            } else {
                 prep.push(this.tokens[0].text)
                 this.tokens.shift()
             }
@@ -142,7 +134,7 @@ export class Parser {
         return prep.join(' ')
     }
 
-    private parseQuantity(): {quantity: number, unit?: string} {
+    private parseQuantity(): { quantity: number, unit?: string } {
         let quantity = 0
         let unit = undefined
 
@@ -155,13 +147,11 @@ export class Parser {
             if (token.tag === Tags.Cardinal) {
                 quantity += eval(token.text)
                 this.tokens.shift()
-            }
-            else if (token.tag === Tags.Noun) {
+            } else if (token.tag === Tags.Noun) {
                 unit = token.text
                 this.tokens.shift()
                 break
-            }
-            else {
+            } else {
                 break
             }
         }
@@ -180,8 +170,7 @@ export class Parser {
             if ([Tags.Adjective, Tags.Noun].includes(this.tokens[0].tag)) {
                 ingredient.push(this.tokens[0].text)
                 this.tokens.shift()
-            }
-            else {
+            } else {
                 break
             }
         }
