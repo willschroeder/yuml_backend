@@ -1,0 +1,134 @@
+version: '3.5'
+networks:
+  metalbox:
+    name: metalbox
+
+volumes:
+  metalbox:
+    name: metalbox
+
+services:
+#  redis:
+#    image: redis
+#    container_name: mb_redis
+#    ports:
+#      - '6379:6379'
+#    networks:
+#      - metalbox
+
+  postgres:
+    image: postgres
+    container_name: mb_postgres
+    hostname: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+    volumes:
+      - metalbox:/var/lib/postgresql
+    networks:
+      - metalbox
+
+#  # Kafka configuration stolen from
+#  # https://github.com/simplesteph/kafka-stack-docker-compose/blob/master/full-stack.yml
+#  # There is some other stuff left out due to it not feeling relevant.
+#  zookeeper:
+#    image: zookeeper:3.4.9
+#    container_name: mb_zookeeper
+#    restart: unless-stopped
+#    hostname: zookeeper
+#    ports:
+#      - '2181:2181'
+#    environment:
+#      ZOO_MY_ID: 1
+#      ZOO_PORT: 2181
+#      ZOO_SERVERS: server.1=zookeeper:2888:3888
+#    networks:
+#      - metalbox
+#
+#  kafka:
+#    image: confluentinc/cp-kafka:5.3.0
+#    container_name: mb_kafka
+#    hostname: kafka
+#    ports:
+#      - '9092:9092'
+#    environment:
+#      KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER_INTERNAL://kafka:19092,LISTENER_DOCKER_EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092
+#      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER_INTERNAL:PLAINTEXT,LISTENER_DOCKER_EXTERNAL:PLAINTEXT
+#      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER_INTERNAL
+#      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+#      KAFKA_BROKER_ID: 1
+#      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+#      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+#    depends_on:
+#      - zookeeper
+#    networks:
+#      - metalbox
+#
+#  kafka-schema-registry:
+#    image: confluentinc/cp-schema-registry:5.3.0
+#    container_name: mb_schema_registry
+#    hostname: kafka-schema-registry
+#    restart: unless-stopped
+#    ports:
+#      - '8081:8081'
+#    environment:
+#      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:19092
+#      SCHEMA_REGISTRY_HOST_NAME: kafka-schema-registry
+#      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+#    depends_on:
+#      - zookeeper
+#      - kafka
+#    networks:
+#      - metalbox
+#
+#  # Tooling Web UIs
+#  kafka-rest-proxy:
+#    image: confluentinc/cp-kafka-rest:5.3.0
+#    container_name: mb_kafka_rest_proxy
+#    hostname: kafka-rest-proxy
+#    ports:
+#      - '8082:8082'
+#    environment:
+#      KAFKA_REST_LISTENERS: http://0.0.0.0:8082/
+#      KAFKA_REST_SCHEMA_REGISTRY_URL: http://kafka-schema-registry:8081/
+#      KAFKA_REST_HOST_NAME: kafka-rest-proxy
+#      KAFKA_REST_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:19092
+#    depends_on:
+#      - zookeeper
+#      - kafka
+#      - kafka-schema-registry
+#    networks:
+#      - metalbox
+#
+#  kafka-topics-ui:
+#    image: landoop/kafka-topics-ui:0.9.4
+#    container_name: mb_kafka_topics_ui
+#    hostname: kafka-topics-ui
+#    ports:
+#      - '8083:8000'
+#    environment:
+#      KAFKA_REST_PROXY_URL: 'http://kafka-rest-proxy:8082/'
+#      PROXY: 'true'
+#    depends_on:
+#      - zookeeper
+#      - kafka
+#      - kafka-schema-registry
+#      - kafka-rest-proxy
+#    networks:
+#      - metalbox
+#
+#  schema-registry-ui:
+#    image: landoop/schema-registry-ui:0.9.4
+#    container_name: mb_schema_registry_ui
+#    hostname: kafka-schema-registry-ui
+#    ports:
+#      - '8084:8000'
+#    environment:
+#      SCHEMAREGISTRY_URL: 'http://kafka-schema-registry:8081/'
+#      PROXY: 'true'
+#    depends_on:
+#      - kafka-schema-registry
+#    networks:
+#      - metalbox
