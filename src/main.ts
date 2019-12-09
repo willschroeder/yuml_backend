@@ -45,6 +45,7 @@ koa.use(koaErrorLogger)
 koa.use(Route.get("/", new IndexController().get()))
 
 if (isMain() && !commandsPresent()) {
+    debug("Serving HTTP on 3000")
     koa.listen(3000)
 }
 
