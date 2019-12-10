@@ -26,6 +26,6 @@ export type ScrapedRecipe = {
     steps: string[]
 }
 
-enum RecipeWebsites {
+export enum RecipeWebsites {
     AllRecipes = "allrecipes"
 }

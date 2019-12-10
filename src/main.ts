@@ -5,6 +5,7 @@ import Debug from "debug"
 import {exceptionHandler} from "./util/util"
 import {Singleton} from "./singleton/singleton"
 import {IndexController} from "./http/index_controller"
+import {RecipeController} from "./http/recipe_controller"
 
 const debug = Debug("yuml:main")
 const args = process.argv.slice(2)
@@ -43,6 +44,7 @@ export const koa = new Koa()
 koa.use(koaBody())
 koa.use(koaErrorLogger)
 koa.use(Route.get("/", new IndexController().get()))
+koa.use(Route.get("/v1/recipe", new RecipeController().get()))
 
 if (isMain() && !commandsPresent()) {
     debug("Serving HTTP on 3000")
