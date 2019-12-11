@@ -1,6 +1,6 @@
-import {Ingredient, Parser, Tokenizer} from "./parser"
+import {IngredientParse, Parser, Tokenizer} from "./parser"
 
-const tests: { text: string, answer: Ingredient }[] = [
+const tests: { text: string, answer: IngredientParse }[] = [
     {
         text: "1 1/2 cups finely chopped red onions",
         answer: {

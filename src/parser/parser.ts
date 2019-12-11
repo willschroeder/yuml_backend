@@ -64,7 +64,7 @@ export class Tokenizer {
     }
 }
 
-export type Ingredient = {
+export type IngredientParse = {
     product?: string
     quantity?: number
     unit?: string
@@ -75,8 +75,8 @@ export class Parser {
     constructor(private tokens: Token[]) {
     }
 
-    public parse(): Ingredient {
-        const ingredient: Ingredient = {}
+    public parse(): IngredientParse {
+        const ingredient: IngredientParse = {}
 
         // console.log(this.tokens)
 
