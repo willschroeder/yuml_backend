@@ -1,7 +1,7 @@
 import {Context} from "koa"
 import {PythonRepo, RecipeWebsites} from "../repo/python"
 import {IngredientParse, Parser, Tokenizer} from "../parser/parser"
-
+import marked = require( "marked" )
 const queryString = require('query-string')
 
 export class ParseController {
@@ -41,7 +41,8 @@ export class ParseController {
                 steps: parsedRecipe.steps
             }
 
-            ctx.body = JSON.stringify(recipe)
+            // ctx.body = JSON.stringify(recipe)
+            ctx.body = marked(recipeToMarkdown(recipe))
         }
     }
 }
@@ -52,4 +53,21 @@ type Recipe = {
         analysis: IngredientParse
     }[]
     steps: string[]
+}
+
+function recipeToMarkdown(r: Recipe): string {
+    let md = []
+    md.push("# Recipe Title")
+    md.push("## Ingredients")
+    md.push("|Text|Quantity|Unit|Ingredient|Prep Instructions|")
+    md.push("|---|---|---|---|---|")
+    for(const i of r.ingredients) {
+        md.push(`|${i.text}|${i.analysis.quantity ?? ""}|${i.analysis.unit ?? ""}|${i.analysis.product ?? ""}|${i.analysis.preparationNotes ?? ""}|`)
+    }
+    md.push("")
+    md.push("## Steps")
+    for(const i of r.steps) {
+        md.push(`* ${i}`)
+    }
+    return md.join("\n")
 }

@@ -5,7 +5,7 @@ import Debug from "debug"
 import {exceptionHandler} from "./util/util"
 import {Singleton} from "./singleton/singleton"
 import {IndexController} from "./http/index_controller"
-import {ParseController} from "./http/recipeController"
+import {ParseController} from "./http/parseController"
 
 const debug = Debug("yuml:main")
 const args = process.argv.slice(2)
