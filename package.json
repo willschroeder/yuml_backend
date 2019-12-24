@@ -33,6 +33,10 @@
     "typescript": "^3.7.2"
   },
   "dependencies": {
+    "@hapi/hapi": "^18.4.0",
+    "@hapi/joi": "^16.1.8",
+    "@types/hapi__hapi": "^18.2.6",
+    "@types/hapi__joi": "^16.0.4",
     "@types/marked": "^0.7.2",
     "compromise": "^11.14.3",
     "debug": "^4.1.1",

@@ -44,7 +44,8 @@ export const koa = new Koa()
 koa.use(koaBody())
 koa.use(koaErrorLogger)
 koa.use(Route.get("/", new IndexController().get()))
-koa.use(Route.get("/v1/recipe", new ParseController().get()))
+koa.use(Route.post("/v1/parse", new ParseController().post()))
+koa.use(Route.get("/v1/recipe/:id", new ParseController().get()))
 
 if (isMain() && !commandsPresent()) {
     debug("Serving HTTP on 3000")

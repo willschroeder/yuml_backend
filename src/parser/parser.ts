@@ -13,7 +13,7 @@ enum Tags {
     Verb = "Verb",
     Adjective = "Adjective",
     Conjunction = "Conjunction",
-    Comma = "Comma"
+    Comma = "Comma",
 }
 
 const WordTags = [Tags.Cardinal, Tags.Noun, Tags.Adverb, Tags.Verb, Tags.Adjective, Tags.Conjunction]

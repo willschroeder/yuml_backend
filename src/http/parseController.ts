@@ -1,21 +1,30 @@
 import {Context} from "koa"
 import {PythonRepo, RecipeWebsites} from "../repo/python"
-import {IngredientParse, Parser, Tokenizer} from "../parser/parser"
-import marked = require( "marked" )
+import {Parser, Tokenizer} from "../parser/parser"
+import {PostgresRecipeRepo, Recipe} from "../repo/postgres/recipe_repo"
+import Joi = require("@hapi/joi")
+import HttpErrors = require("http-errors")
+
 const queryString = require('query-string')
 
+
 export class ParseController {
-    public get() {
+    public post() {
         return async (ctx: Context) => {
-            const parsed = queryString.parseUrl(ctx.request.query.url)
-            console.log(parsed.url)
-            console.log(parsed.query.referringContentType)
+            // Joi.assert(ctx.request.body,
+            //     {email: Joi.string().uri()},
+            //     new HttpErrors.UnprocessableEntity())
 
-            const regex = /allrecipes\.com/g
-            console.log(regex.test(parsed.url))
+            const parsedUrl = queryString.parseUrl(ctx.request.query.url)
+            let website: RecipeWebsites
+            if (/allrecipes\.com/g.test(parsedUrl.url)) {
+                website = RecipeWebsites.AllRecipes
+            } else {
+                throw new HttpErrors.NotImplemented("Does not support that website")
+            }
 
-            const repo = new PythonRepo()
-            const parsedRecipe = await repo.scrapeRecipe(RecipeWebsites.AllRecipes, parsed.url)
+            const pythonRepo = new PythonRepo()
+            const parsedRecipe = await pythonRepo.scrapeRecipe(website, parsedUrl.url)
 
             const ingredients = parsedRecipe.ingredients.map((i) => {
                 try {
@@ -25,8 +34,7 @@ export class ParseController {
                         text: i,
                         analysis: parsed
                     }
-                }
-                catch(e) {
+                } catch (e) {
                     console.log(e)
                     console.log(i)
                     return {
@@ -36,23 +44,32 @@ export class ParseController {
                 }
             })
 
-            const recipe: Recipe = {
+            const postgresRepo = new PostgresRecipeRepo()
+            const savedRecipe = await postgresRepo.create({url: parsedUrl.url,
                 ingredients: ingredients,
-                steps: parsedRecipe.steps
-            }
+                steps: parsedRecipe.steps})
 
-            // ctx.body = JSON.stringify(recipe)
-            ctx.body = marked(recipeToMarkdown(recipe))
+            ctx.status = 303
+            ctx.redirect(`/v1/recipe/${savedRecipe.uuid}`)
+            ctx.body = {
+                uuid: savedRecipe.uuid
+            }
         }
     }
-}
 
-type Recipe = {
-    ingredients: {
-        text: string
-        analysis: IngredientParse
-    }[]
-    steps: string[]
+    public get() {
+        return async (ctx: Context, id: string) => {
+            const postgresRepo = new PostgresRecipeRepo()
+            const recipe = postgresRepo.get(id)
+
+            if (recipe === null) {
+                ctx.status = 404
+                return
+            }
+            ctx.body = JSON.stringify(recipe)
+            // ctx.body = marked(recipeToMarkdown(recipe))
+        }
+    }
 }
 
 function recipeToMarkdown(r: Recipe): string {
@@ -61,12 +78,12 @@ function recipeToMarkdown(r: Recipe): string {
     md.push("## Ingredients")
     md.push("|Text|Quantity|Unit|Ingredient|Prep Instructions|")
     md.push("|---|---|---|---|---|")
-    for(const i of r.ingredients) {
+    for (const i of r.ingredients) {
         md.push(`|${i.text}|${i.analysis.quantity ?? ""}|${i.analysis.unit ?? ""}|${i.analysis.product ?? ""}|${i.analysis.preparationNotes ?? ""}|`)
     }
     md.push("")
     md.push("## Steps")
-    for(const i of r.steps) {
+    for (const i of r.steps) {
         md.push(`* ${i}`)
     }
     return md.join("\n")
