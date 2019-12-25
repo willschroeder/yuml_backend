@@ -54,6 +54,7 @@ export class PostgresRecipeRepo {
 
 export type Recipe = {
     uuid: string
+    url: string
     ingredients: Ingredient[]
     steps: string[]
 }

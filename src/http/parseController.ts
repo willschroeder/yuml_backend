@@ -60,7 +60,7 @@ export class ParseController {
     public get() {
         return async (ctx: Context, id: string) => {
             const postgresRepo = new PostgresRecipeRepo()
-            const recipe = postgresRepo.get(id)
+            const recipe = await postgresRepo.get(id)
 
             if (recipe === null) {
                 ctx.status = 404
