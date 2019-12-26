@@ -19,11 +19,12 @@ it("should get a recipe", async() => {
     const recipe = await Factories.Recipe(true)
     const ctx = createMockContext({
         method: "GET",
-        url: `/v1/recipe/${recipe.uuid}`
+        url: `/v1/recipe/${recipe.uuid}`,
     })
+    ctx.params = {id: recipe.uuid}
 
     const renderView = new ParseController().get()
-    await renderView(ctx, recipe.uuid)
+    await renderView(ctx)
 
     expect(JSON.parse(ctx.body)).toMatchObject(recipe)
 })

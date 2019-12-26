@@ -58,14 +58,15 @@ export class ParseController {
     }
 
     public get() {
-        return async (ctx: Context, id: string) => {
+        return async (ctx: Context) => {
             const postgresRepo = new PostgresRecipeRepo()
-            const recipe = await postgresRepo.get(id)
+            const recipe = await postgresRepo.get(ctx.params.id)
 
             if (recipe === null) {
                 ctx.status = 404
                 return
             }
+            console.log(ctx.params)
             ctx.body = JSON.stringify(recipe)
             // ctx.body = marked(recipeToMarkdown(recipe))
         }

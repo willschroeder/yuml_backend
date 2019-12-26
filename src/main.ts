@@ -1,6 +1,7 @@
 import Koa = require("koa")
 import koaBody = require("koa-body")
 import Route = require("koa-route")
+import Router = require("koa-router");
 import Debug from "debug"
 import {exceptionHandler} from "./util/util"
 import {Singleton} from "./singleton/singleton"
@@ -41,11 +42,17 @@ async function koaErrorLogger(ctx: Koa.ParameterizedContext, next: () => Promise
 }
 
 export const koa = new Koa()
+const router = new Router();
+
 koa.use(koaBody())
 koa.use(koaErrorLogger)
-koa.use(Route.get("/", new IndexController().get()))
-koa.use(Route.post("/v1/parse", new ParseController().post()))
-koa.use(Route.get("/v1/recipe/:id", new ParseController().get()))
+
+router.get("/", new IndexController().get())
+router.post("/v1/parse", new ParseController().post())
+router.get("/v1/recipe/:id", new ParseController().get())
+router.get("/v1/recipe/:id/:style", new ParseController().get())
+
+koa.use(router.routes()).use(router.allowedMethods())
 
 if (isMain() && !commandsPresent()) {
     debug("Serving HTTP on 3000")

@@ -1,4 +1,4 @@
-import {Context} from "koa"
+import {Context, Next} from "koa"
 
 export class IndexController {
     public get() {
