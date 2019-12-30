@@ -1,4 +1,4 @@
-import {resolveEnvironment} from "../util/util"
+import {resolveEnvironment, isDevelopmentOrTestEnvironment} from "../util/util"
 import Debug from "debug"
 import PG = require("pg")
 import Postgrator = require("postgrator")
@@ -15,13 +15,21 @@ export class Singleton {
 
     public static pg() {
         if (!Singleton.pgInst) {
-            Singleton.pgInst = new PG.Pool({
-                port: Singleton.resolvePort(process.env.POSTGRES_PORT, 5432),
-                host: process.env.POSTGRES_HOST || "localhost",
-                user: process.env.POSTGRES_USER || "root",
-                password: process.env.POSTGRES_PASSWORD || "root",
-                database: process.env.POSTGRES_DB || `yuml_${resolveEnvironment()}`,
-            })
+            if (isDevelopmentOrTestEnvironment()) {
+                Singleton.pgInst = new PG.Pool({
+                    port: Singleton.resolvePort(process.env.POSTGRES_PORT, 5432),
+                    host: process.env.POSTGRES_HOST || "localhost",
+                    user: process.env.POSTGRES_USER || "root",
+                    password: process.env.POSTGRES_PASSWORD || "root",
+                    database: process.env.POSTGRES_DB || `yuml_${resolveEnvironment()}`,
+                })
+            }
+            else {
+                Singleton.pgInst = new PG.Pool({
+                    connectionString: process.env.DATABASE_URL,
+                    ssl: true,
+                })
+            }
         }
 
         return Singleton.pgInst
