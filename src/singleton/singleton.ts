@@ -54,6 +54,8 @@ export class Singleton {
                     driver: "pg",
                     connectionString: process.env.DATABASE_URL,
                     ssl: true,
+                    migrationDirectory: require("path").resolve("./src/migrations"),
+                    schemaTable: "migrations",
                 })
             }
 
