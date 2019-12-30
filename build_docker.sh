@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-docker build .
+docker build -t yuml-backend .
