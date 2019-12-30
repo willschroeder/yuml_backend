@@ -55,8 +55,9 @@ router.get("/v1/recipe/:id/:style", new ParseController().get())
 koa.use(router.routes()).use(router.allowedMethods())
 
 if (isMain() && !commandsPresent()) {
-    debug("Serving HTTP on 3000")
-    koa.listen(3000)
+    const httpPort = process.env.HTTP_PORT || 3000
+    debug(`Serving HTTP on ${httpPort}`)
+    koa.listen(httpPort)
 }
 
 export async function runCommand(commands: string[]) {
