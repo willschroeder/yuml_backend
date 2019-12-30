@@ -37,16 +37,25 @@ export class Singleton {
 
     public static postgrator() {
         if (!Singleton.postgratorInst) {
-            Singleton.postgratorInst = new Postgrator({
-                migrationDirectory: require("path").resolve("./src/migrations"),
-                driver: "pg",
-                host: process.env.POSTGRES_HOST || "localhost",
-                port: Singleton.resolvePort(process.env.POSTGRES_PORT, 5432),
-                user: process.env.POSTGRES_USER || "root",
-                password: process.env.POSTGRES_PASSWORD || "root",
-                database: process.env.POSTGRES_DB || `yuml_${resolveEnvironment()}`,
-                schemaTable: "migrations",
-            })
+            if (isDevelopmentOrTestEnvironment()) {
+                Singleton.postgratorInst = new Postgrator({
+                    migrationDirectory: require("path").resolve("./src/migrations"),
+                    driver: "pg",
+                    host: process.env.POSTGRES_HOST || "localhost",
+                    port: Singleton.resolvePort(process.env.POSTGRES_PORT, 5432),
+                    user: process.env.POSTGRES_USER || "root",
+                    password: process.env.POSTGRES_PASSWORD || "root",
+                    database: process.env.POSTGRES_DB || `yuml_${resolveEnvironment()}`,
+                    schemaTable: "migrations",
+                })
+            }
+            else {
+                Singleton.postgratorInst = new Postgrator({
+                    driver: "pg",
+                    connectionString: process.env.DATABASE_URL,
+                    ssl: true,
+                })
+            }
 
             Singleton.postgratorInst.on("validation-started", (migration) => debug(migration))
             Singleton.postgratorInst.on("validation-finished", (migration) => debug(migration))
