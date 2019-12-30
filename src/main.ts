@@ -1,6 +1,5 @@
 import Koa = require("koa")
 import koaBody = require("koa-body")
-import Route = require("koa-route")
 import Router = require("koa-router");
 import Debug from "debug"
 import {exceptionHandler} from "./util/util"
