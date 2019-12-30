@@ -55,7 +55,7 @@ router.get("/v1/recipe/:id/:style", new ParseController().get())
 koa.use(router.routes()).use(router.allowedMethods())
 
 if (isMain() && !commandsPresent()) {
-    const httpPort = process.env.HTTP_PORT || 3000
+    const httpPort = process.env.PORT || 3000
     debug(`Serving HTTP on ${httpPort}`)
     koa.listen(httpPort)
 }
